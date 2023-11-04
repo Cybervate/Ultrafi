@@ -14,27 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>-1</y>
-      <width>511</width>
-      <height>651</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QTreeView" name="treeView"/>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>-1</x>
       <y>119</y>
-      <width>801</width>
+      <width>621</width>
       <height>511</height>
      </rect>
     </property>
@@ -42,7 +27,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="ArtistsTab">
         <property name="enabled">
@@ -51,16 +36,46 @@
         <attribute name="title">
          <string>Artists</string>
         </attribute>
+        <widget class="QListWidget" name="artistList">
+         <property name="geometry">
+          <rect>
+           <x>-5</x>
+           <y>1</y>
+           <width>1231</width>
+           <height>481</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="AlbumsTab">
         <attribute name="title">
          <string>Albums</string>
         </attribute>
+        <widget class="QListWidget" name="albumList">
+         <property name="geometry">
+          <rect>
+           <x>-5</x>
+           <y>1</y>
+           <width>1231</width>
+           <height>481</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="SongsTab">
         <attribute name="title">
          <string>Songs</string>
         </attribute>
+        <widget class="QListWidget" name="songList">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1231</width>
+           <height>481</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -80,6 +95,47 @@
       <widget class="QPushButton" name="playButton">
        <property name="text">
         <string>Play</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>0</y>
+      <width>261</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QSlider" name="volumeSlider">
+       <property name="value">
+        <number>99</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>120</y>
+      <width>531</width>
+      <height>511</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="coverLabel">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

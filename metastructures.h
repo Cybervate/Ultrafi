@@ -3,6 +3,12 @@
 
 #include <vector>
 #include <string>
+#include <QPixmap>
+
+class Artlib {
+public:
+    std::vector<QPixmap*> albumCovers;
+};
 
 class Song {
 public:
@@ -11,8 +17,9 @@ public:
 
     unsigned int track = 0;
 
-    Song(std::string songName) {
+    Song(std::string songName, std::string songPath) {
         name = songName;
+        path = songPath;
     }
 
 //    void setTrack(unsigned int aTrack);
@@ -27,7 +34,7 @@ public:
         name = albumName;
     }
 
-    Song * addSong(std::string songName);
+    Song * addSong(std::string songName, std::string songPath);
 };
 
 class Artist {

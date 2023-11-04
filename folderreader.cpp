@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <vector>
 
-void fillLibrary(TagLib::Tag * tag) {
+void fillLibrary(TagLib::Tag * tag, std::string songPath) {
     std::string artName = tag->artist().toCString();
     std::string albName = tag->album().toCString();
     std::string songName = tag->title().toCString();
@@ -52,7 +52,7 @@ void fillLibrary(TagLib::Tag * tag) {
         songName = "Unknown Song";
     }
 
-    pSong = pAlbum->addSong(songName);
+    pSong = pAlbum->addSong(songName, songPath);
 
     if(tag->track()) {
         std::cout << tag->track();
@@ -69,7 +69,7 @@ void folderLoop(const std::string path) {
 
         if (itemRef.tag()) {
             std::cout << itemRef.tag()->artist() << " - " << itemRef.tag()->title() << " : " << itemRef.tag()->album() << std::endl;
-            fillLibrary(itemRef.tag());
+            fillLibrary(itemRef.tag(), entry.path());
         }
         else if (entry.is_directory()) {
             folderLoop(entry.path().u8string());

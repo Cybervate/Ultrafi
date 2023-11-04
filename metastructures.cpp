@@ -15,8 +15,8 @@ Album * Artist::addAlbum(std::string albName) {
     return newAlbum;
 }
 
-Song * Album::addSong(std::string songName) {
-    Song * newSong = new Song(songName);
+Song * Album::addSong(std::string songName, std::string songPath) {
+    Song * newSong = new Song(songName, songPath);
     songs.push_back(newSong);
     return newSong;
 }

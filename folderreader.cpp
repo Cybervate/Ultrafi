@@ -12,13 +12,53 @@
 #include <vector>
 
 void fillLibrary(TagLib::Tag * tag) {
-    Artist artist = Artist("artist");
-    if (std::find(library->artists.begin(), library->artists.end(), artist) != library->artists.end()) {
-        std::cout << "XXX" << tag->artist() << "XXX" << std::endl;
-    }
-    else {
+    std::string artName = tag->artist().toCString();
+    std::string albName = tag->album().toCString();
+    std::string songName = tag->title().toCString();
 
-        library->artists.insert(library->artists.end(), artist);
+    Artist * pArtist;
+    Album * pAlbum;
+    Song * pSong;
+
+    bool artistFound = false;
+    if (tag->artist().isEmpty()) {
+        artName = "Unknown Artist";
+    }
+    for(auto &art : library.artists) {
+        if(art->name == artName) {
+            artistFound = true;
+            pArtist = art;
+        }
+    }
+    if (!artistFound) {
+        pArtist = library.addArtist(artName);
+    }
+
+    bool albumFound = false;
+    if (tag->album().isEmpty()) {
+        albName = "Unknown Album";
+    }
+    for (auto &alb : pArtist->albums) {
+        if (alb->name == albName) {
+            albumFound = true;
+            pAlbum = alb;
+        }
+    }
+    if (!albumFound) {
+        pAlbum = pArtist->addAlbum(albName);
+    }
+
+    if (tag->title().isEmpty()) {
+        songName = "Unknown Song";
+    }
+
+    pSong = pAlbum->addSong(songName);
+
+    if(tag->track()) {
+        std::cout << tag->track();
+//        pSong->setTrack(tag->track());
+        pSong->track = tag->track();
+        std::cout << "Y" << pSong->track;
     }
 }
 
@@ -31,10 +71,19 @@ void folderLoop(const std::string path) {
             std::cout << itemRef.tag()->artist() << " - " << itemRef.tag()->title() << " : " << itemRef.tag()->album() << std::endl;
             fillLibrary(itemRef.tag());
         }
-
-
-        if (entry.is_directory()) {
+        else if (entry.is_directory()) {
             folderLoop(entry.path().u8string());
+        }
+    }
+
+}
+
+void sortAlbums() {
+    for (auto &a : library.artists) {
+        for (auto &alb : a->albums) {
+            sort(alb->songs.begin(), alb->songs.end(), [](Song* s1, Song* s2) {
+                return s1->track < s2->track;
+            });
         }
     }
 }
@@ -42,9 +91,20 @@ void folderLoop(const std::string path) {
 void readFolder() {
     std::string path = "/home/mmb/Desktop/UltrafiLibrary";
 
-//    TagLib::FileRef f("/home/mmb/Desktop/UltrafiLibrary/Travis Scott/Travis Scott -  Rodeo [2015]/03. 3500 (feat. Future & 2 Chainz).mp3");
-
     folderLoop(path);
+    sortAlbums();
+
+    for (auto a : library.artists) {
+        std::cout << "Artist: " << a->name << " ";
+        for (auto alb : a->albums) {
+            std::cout << "Album: " << alb->name << " " << std::endl;;
+            for (auto song : alb->songs) {
+                std::cout << song->track << ". " << song->name << std::endl;
+            }
+        }
+        std::cout << std::endl;
+    }
+
 }
 
 

@@ -6,6 +6,7 @@
 #include <QList>
 
 #include "metastructures.h"
+#include "audioengine.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,8 +20,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_playButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+
     QFileSystemModel *FSmodel = new QFileSystemModel;
+
+    irrklang::ik_u32 songPos = 0;
+
+    irrklang::ISoundEngine* audioEngine = audioInit();
+    irrklang::ISound * music = NULL;
+
 };
 #endif // MAINWINDOW_H

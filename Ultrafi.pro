@@ -13,13 +13,15 @@ SOURCES += \
     folderreader.cpp \
     main.cpp \
     mainwindow.cpp \
-    metastructures.cpp
+    metastructures.cpp \
+    scrapecovers.cpp
 
 HEADERS += \
     audioengine.h \
     folderreader.h \
     mainwindow.h \
-    metastructures.h
+    metastructures.h \
+    scrapecovers.h
 
 FORMS += \
     mainwindow.ui

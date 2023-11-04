@@ -4,6 +4,7 @@
 #include <iostream>
 #include <filesystem>
 #include "metastructures.h"
+#include "scrapecovers.h"
 
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
@@ -55,11 +56,20 @@ void fillLibrary(TagLib::Tag * tag, std::string songPath) {
     pSong = pAlbum->addSong(songName, songPath);
 
     if(tag->track()) {
-        std::cout << tag->track();
-//        pSong->setTrack(tag->track());
         pSong->track = tag->track();
-        std::cout << "Y" << pSong->track;
     }
+
+    bool artworkFound = false;
+    for (auto &artwork : artLibrary.albumCovers) {
+        if (pAlbum->name == artwork->albumName) {
+            artworkFound = true;
+        }
+    }
+    if (!artworkFound) {
+        artLibrary.addArtwork(songPath, pAlbum->name);
+        scrapeCover(songPath, "/home/mmb/Code/Ultrafi/Ultrafi/Covers/", pAlbum->name + ".jpeg");
+    }
+
 }
 
 void folderLoop(const std::string path) {
@@ -105,6 +115,12 @@ void readFolder() {
         std::cout << std::endl;
     }
 
+    for (auto art : artLibrary.albumCovers) {
+        std::cout << "Cover Art: " << art->albumName << std::endl;
+    }
+//    scrapeCover("/home/mmb/Desktop/UltrafiLibrary/Travis Scott/Travis Scott - ASTROWORLD (2018) [FLAC] [Hunter]/Travis Scott - ASTROWORLD (2018) [FLAC]/01. STARGAZING.flac",
+//                "/home/mmb/Code/Ultrafi/Ultrafi/Covers/",
+//                "Astroworld.jpeg");
 }
 
 

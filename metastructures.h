@@ -5,9 +5,23 @@
 #include <string>
 #include <QPixmap>
 
+class Artwork {
+public:
+    QPixmap albumCover;
+    std::string albumName;
+
+    Artwork (QPixmap tAlbumCover, std::string tAlbumName) {
+        albumCover = tAlbumCover;
+        albumName = tAlbumName;
+    }
+};
+
 class Artlib {
 public:
-    std::vector<QPixmap*> albumCovers;
+    std::vector<Artwork*> albumCovers;
+
+    void artlibInit();
+    Artwork * addArtwork(std::string artworkPath, std::string artworkAlbumName);
 };
 
 class Song {
@@ -61,6 +75,7 @@ public:
     Artist * addArtist(std::string aName);
 };
 
+extern Artlib artLibrary;
 extern Library library;
 
 #endif // METASTRUCTURES_H

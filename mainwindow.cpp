@@ -4,6 +4,7 @@
 #include "./ui_mainwindow.h"
 
 #include "audioengine.h"
+#include "scrapecovers.h"
 
 #include <iostream>
 #include <qlabel.h>
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 //    ui->treeView->setModel(FSmodel);
 //    ui->treeView->setRootIndex(FSmodel->index("C:/Users/mmbpr.DESKTOP-DKSGGBP.000/Desktop/UltrafiLibrary"));
+    clearCoverFolder();
 
     readFolder();
 
@@ -35,9 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
 
-    QPixmap* image = new QPixmap("/home/mmb/Code/Ultrafi/Ultrafi/unknowncoverpng");
-    ui->coverLabel->setPixmap(*image);
-    ui->coverLabel->setScaledContents(true);
+    artLibrary.artlibInit();
+
+//    QPixmap* image = new QPixmap("/home/mmb/Code/Ultrafi/Ultrafi/unknowncoverpng");
+//    ui->coverLabel->setPixmap(*image);
+//    ui->coverLabel->setScaledContents(true);
 }
 MainWindow::~MainWindow()
 {
@@ -73,5 +77,8 @@ void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
     MainWindow::on_playButton_clicked();
     songPos = 0;
     MainWindow::on_playButton_clicked();
+
+    ui->coverLabel->setPixmap((artLibrary.albumCovers.front()->albumCover));
+    ui->coverLabel->setScaledContents(true);
 }
 

@@ -41,13 +41,8 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
     }
-
-
-
-//    QPixmap* image = new QPixmap("/home/mmb/Code/Ultrafi/Ultrafi/unknowncoverpng");
-//    ui->coverLabel->setPixmap(*image);
-//    ui->coverLabel->setScaledContents(true);
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -91,11 +86,12 @@ void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
             if (alb->name == itemSong->albumName) {
                 artworkFound = true;
                 ui->coverLabel->setPixmap(alb->albumArtwork->albumCover);
-                break;
+                goto artworkNotFound;
             }
         }
     }
 
+    artworkNotFound:
     if (!artworkFound) {
             ui->coverLabel->setPixmap(artLibrary.albumCovers.front()->albumCover);
     }

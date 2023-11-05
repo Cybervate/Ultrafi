@@ -21,7 +21,7 @@ public:
     std::vector<Artwork*> albumCovers;
 
     void artlibInit();
-    Artwork * addArtwork(std::string artworkPath, std::string artworkAlbumName);
+    Artwork * addArtwork(QPixmap pixmap, std::string artworkAlbumName);
 };
 
 class Song {

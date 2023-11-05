@@ -27,9 +27,8 @@ void Artlib::artlibInit() {
     albumCovers.push_back(new Artwork(uArt, "Unknown Album"));
 }
 
-Artwork * Artlib::addArtwork(std::string artworkPath, std::string artworkAlbumName) {
-    QPixmap uArt(artworkPath.c_str());
-    Artwork * newArtwork = new Artwork(uArt, artworkAlbumName);
+Artwork * Artlib::addArtwork(QPixmap pixmap, std::string artworkAlbumName) {
+    Artwork * newArtwork = new Artwork(pixmap, artworkAlbumName);
     albumCovers.push_back(newArtwork);
     return newArtwork;
 }

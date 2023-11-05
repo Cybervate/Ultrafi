@@ -27,28 +27,31 @@ public:
 class Song {
 public:
     std::string name;
+    std::string albumName;
     std::string path;
 
     unsigned int track = 0;
 
-    Song(std::string songName, std::string songPath) {
+    Song(std::string songName, std::string tAlbumName, std::string songPath) {
         name = songName;
+        albumName = tAlbumName;
         path = songPath;
     }
 
-//    void setTrack(unsigned int aTrack);
 };
 
 class Album {
 public:
     std::string name;
     std::vector<Song*> songs;
+    Artwork * albumArtwork = NULL;
 
     Album(std::string albumName) {
         name = albumName;
     }
 
     Song * addSong(std::string songName, std::string songPath);
+    void addArtwork(Artwork * tAlbumArtwork);
 };
 
 class Artist {

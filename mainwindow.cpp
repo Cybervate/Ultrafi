@@ -9,6 +9,8 @@
 #include <iostream>
 #include <qlabel.h>
 
+#define SONGROLE 4
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -22,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 //    ui->treeView->setRootIndex(FSmodel->index("C:/Users/mmbpr.DESKTOP-DKSGGBP.000/Desktop/UltrafiLibrary"));
     clearCoverFolder();
 
+    artLibrary.artlibInit();
+
     readFolder();
 
     for (auto &art : library.artists) {
@@ -31,13 +35,14 @@ MainWindow::MainWindow(QWidget *parent)
             for (auto &song : alb->songs) {
                 QListWidgetItem* songItem = new QListWidgetItem();
                 songItem->setText((QString::fromStdString(song->name)));
-                songItem->setData(Qt::UserRole, song->path.c_str());
+//                songItem->setData(Qt::UserRole, song->path.c_str());
+                songItem->setData(SONGROLE, QVariant::fromValue(song));
                 ui->songList->addItem(songItem);
             }
         }
     }
 
-    artLibrary.artlibInit();
+
 
 //    QPixmap* image = new QPixmap("/home/mmb/Code/Ultrafi/Ultrafi/unknowncoverpng");
 //    ui->coverLabel->setPixmap(*image);
@@ -72,13 +77,29 @@ void MainWindow::on_volumeSlider_sliderMoved(int position)
 
 void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
 {
-    std::cout << item->data(Qt::UserRole).toString().toStdString() << std::endl;
-    curSongPath = item->data(Qt::UserRole).toString().toStdString();
+    Song * itemSong = item->data(SONGROLE).value<Song*>();
+
+    curSongPath = itemSong->path;
+
     MainWindow::on_playButton_clicked();
     songPos = 0;
     MainWindow::on_playButton_clicked();
 
-    ui->coverLabel->setPixmap((artLibrary.albumCovers.front()->albumCover));
+    bool artworkFound = false;
+    for (auto &art : library.artists) {
+        for (auto &alb : art->albums) {
+            if (alb->name == itemSong->albumName) {
+                artworkFound = true;
+                ui->coverLabel->setPixmap(alb->albumArtwork->albumCover);
+                break;
+            }
+        }
+    }
+
+    if (!artworkFound) {
+            ui->coverLabel->setPixmap(artLibrary.albumCovers.front()->albumCover);
+    }
+
     ui->coverLabel->setScaledContents(true);
 }
 

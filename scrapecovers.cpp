@@ -3,10 +3,11 @@
 #include <iostream>
 #include <stdlib.h>
 
-void scrapeCover(std::string coverPath, std::string targetPath, std::string albumName) {
+std::string scrapeCover(std::string coverPath, std::string targetPath, std::string albumName) {
     std::string command = "ffmpeg -i \"" + coverPath + "\" -an \"" + targetPath + albumName + "\"";
     std::cout << "COMMAND: " << command << std::endl;
     system(command.c_str());
+    return targetPath+albumName;
 }
 
 void clearCoverFolder() {

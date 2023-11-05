@@ -17,19 +17,25 @@ Album * Artist::addAlbum(std::string albName) {
 }
 
 Song * Album::addSong(std::string songName, std::string songPath) {
-    Song * newSong = new Song(songName, songPath);
+    Song * newSong = new Song(songName, name, songPath);
     songs.push_back(newSong);
     return newSong;
 }
 
 void Artlib::artlibInit() {
     QPixmap uArt("/home/mmb/Code/Ultrafi/Ultrafi/Covers/unknowncoverpng");
-    albumCovers.insert(albumCovers.begin(), new Artwork(uArt, "Unknown Album"));
+    albumCovers.push_back(new Artwork(uArt, "Unknown Album"));
 }
 
 Artwork * Artlib::addArtwork(std::string artworkPath, std::string artworkAlbumName) {
     QPixmap uArt(artworkPath.c_str());
-    albumCovers.push_back(new Artwork(uArt, artworkAlbumName));
+    Artwork * newArtwork = new Artwork(uArt, artworkAlbumName);
+    albumCovers.push_back(newArtwork);
+    return newArtwork;
+}
+
+void Album::addArtwork(Artwork * tAlbumArtwork) {
+    albumArtwork = tAlbumArtwork;
 }
 //void Song::setTrack(unsigned int aTrack) {
 //    track = aTrack;

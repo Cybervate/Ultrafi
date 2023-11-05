@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <string>
 
 void fillLibrary(TagLib::Tag * tag, std::string songPath) {
     std::string artName = tag->artist().toCString();
@@ -59,31 +60,47 @@ void fillLibrary(TagLib::Tag * tag, std::string songPath) {
         pSong->track = tag->track();
     }
 
-    bool artworkFound = false;
-    for (auto &artwork : artLibrary.albumCovers) {
-        if (pAlbum->name == artwork->albumName) {
-            artworkFound = true;
+
+    if (pAlbum->albumArtwork == NULL) {
+        std::string coverPath = scrapeCover(songPath, "/home/mmb/Code/Ultrafi/Ultrafi/Covers/", pAlbum->name + ".jpeg");
+
+        if(!coverPath.empty() && !pAlbum->name.empty()) {
+            pAlbum->addArtwork(artLibrary.addArtwork(coverPath, pAlbum->name));
+        }
+        else {
+            pAlbum->addArtwork(artLibrary.albumCovers.front());
         }
     }
-    if (!artworkFound) {
-        artLibrary.addArtwork(songPath, pAlbum->name);
-        scrapeCover(songPath, "/home/mmb/Code/Ultrafi/Ultrafi/Covers/", pAlbum->name + ".jpeg");
+    else if (pAlbum->name == "Unknown Album") {
+        pAlbum->addArtwork(artLibrary.albumCovers.front());
     }
-
 }
 
 void folderLoop(const std::string path) {
     for (const auto & entry : std::filesystem::directory_iterator(path)) {
-        TagLib::FileRef itemRef(entry.path().c_str());
+        if (entry.is_directory()) {
+            folderLoop(entry.path().u8string());
+            continue;
+        }
 
+        std::string fileType = entry.path().extension();
+        if (
+            fileType != ".mp3" &&
+            fileType != ".wav" &&
+            fileType != ".flac" &&
+            fileType != ".ogg"
+            )
+        {
+            continue;
+        }
+
+        TagLib::FileRef itemRef(entry.path().c_str());
 
         if (itemRef.tag()) {
             std::cout << itemRef.tag()->artist() << " - " << itemRef.tag()->title() << " : " << itemRef.tag()->album() << std::endl;
             fillLibrary(itemRef.tag(), entry.path());
         }
-        else if (entry.is_directory()) {
-            folderLoop(entry.path().u8string());
-        }
+
     }
 
 }
@@ -118,9 +135,13 @@ void readFolder() {
     for (auto art : artLibrary.albumCovers) {
         std::cout << "Cover Art: " << art->albumName << std::endl;
     }
-//    scrapeCover("/home/mmb/Desktop/UltrafiLibrary/Travis Scott/Travis Scott - ASTROWORLD (2018) [FLAC] [Hunter]/Travis Scott - ASTROWORLD (2018) [FLAC]/01. STARGAZING.flac",
-//                "/home/mmb/Code/Ultrafi/Ultrafi/Covers/",
-//                "Astroworld.jpeg");
+
+//    for (auto a : library.artists) {
+//        for (auto alb : a->albums) {
+//            std::cout << "NN: " << alb->albumArtwork->albumName << " " << std::endl;;
+//        }
+//        std::cout << std::endl;
+//    }
 }
 
 

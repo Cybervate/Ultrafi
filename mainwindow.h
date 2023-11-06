@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    void callSkip();
     ~MainWindow();
 
 private slots:
@@ -46,10 +47,21 @@ private slots:
 
     void customAlbumSlot(QListWidgetItem * item);
 
+    void on_albumList_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_SkipButton_clicked();
+
+    void on_BackButton_clicked();
+
+    void on_volumeSlider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
 
     QFileSystemModel *FSmodel = new QFileSystemModel;
+
+    Song * curSongRef;
+    QListWidgetItem * curItemRef = NULL;
 
     std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
     irrklang::ik_u32 songPos = 0;
@@ -60,6 +72,7 @@ private:
     void ScrubTick();
     void handleSongPlay(Song * itemSong);
     void handleCoverFind(std::string albumName);
+    void handleAlbumTab(Album * albumItem);
 
 };
 #endif // MAINWINDOW_H

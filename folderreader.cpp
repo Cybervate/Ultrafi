@@ -71,7 +71,7 @@ void fillLibrary(TagLib::FileRef itemRef, std::string songPath, std::string file
         songName = "Unknown Song";
     }
 
-    pSong = pAlbum->addSong(songName, songPath, tag->track());
+    pSong = pAlbum->addSong(songName, songPath, pArtist->name, tag->track());
 
     if (pAlbum->albumArtwork == NULL) {
 

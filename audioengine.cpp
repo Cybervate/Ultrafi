@@ -1,8 +1,8 @@
 #include <audioengine.h>
 #include <iostream>
+#include "mainwindow.h"
 
 using namespace irrklang;
-
 
 ISoundEngine* audioInit() {
     ISoundEngine* engine = createIrrKlangDevice();

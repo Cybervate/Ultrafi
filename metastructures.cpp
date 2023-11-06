@@ -11,13 +11,13 @@ Artist * Library::addArtist(std::string aName) {
 }
 
 Album * Artist::addAlbum(std::string albName) {
-    Album * newAlbum = new Album(albName);
+    Album * newAlbum = new Album(albName, this);
     albums.push_back(newAlbum);
     return newAlbum;
 }
 
-Song * Album::addSong(std::string songName, std::string songPath, unsigned int songTrack) {
-    Song * newSong = new Song(songName, name, songPath, songTrack);
+Song * Album::addSong(std::string songName, std::string songPath, std::string artistName, unsigned int songTrack) {
+    Song * newSong = new Song(songName, name, artistName, songPath, songTrack, this);
     songs.push_back(newSong);
     return newSong;
 }

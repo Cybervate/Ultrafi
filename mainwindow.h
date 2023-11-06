@@ -30,6 +30,22 @@ private slots:
 
     void on_songList_itemDoubleClicked(QListWidgetItem *item);
 
+    void on_ScrubbingSlider_sliderMoved(int position);
+
+    void on_ScrubbingSlider_valueChanged(int value);
+
+    void on_ScrubbingSlider_actionTriggered(int action);
+
+    void on_ScrubbingSlider_sliderPressed();
+
+    void on_artistList_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_tabWidget_tabBarDoubleClicked(int index);
+
+    void customArtistSlot(QListWidgetItem * item);
+
+    void customAlbumSlot(QListWidgetItem * item);
+
 private:
     Ui::MainWindow *ui;
 
@@ -40,6 +56,10 @@ private:
 
     irrklang::ISoundEngine* audioEngine = audioInit();
     irrklang::ISound * music = NULL;
+
+    void ScrubTick();
+    void handleSongPlay(Song * itemSong);
+    void handleCoverFind(std::string albumName);
 
 };
 #endif // MAINWINDOW_H

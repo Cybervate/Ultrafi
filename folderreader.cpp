@@ -4,7 +4,6 @@
 #include <iostream>
 #include <filesystem>
 #include "metastructures.h"
-#include "scrapecovers.h"
 
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
@@ -72,11 +71,7 @@ void fillLibrary(TagLib::FileRef itemRef, std::string songPath, std::string file
         songName = "Unknown Song";
     }
 
-    pSong = pAlbum->addSong(songName, songPath);
-
-    if(tag->track()) {
-        pSong->track = tag->track();
-    }
+    pSong = pAlbum->addSong(songName, songPath, tag->track());
 
     if (pAlbum->albumArtwork == NULL) {
 
@@ -206,15 +201,4 @@ void readFolder() {
         }
         std::cout << std::endl;
     }
-
-//    for (auto art : artLibrary.albumCovers) {
-//        std::cout << "Cover Art: " << art->albumName << std::endl;
-//    }
-
-//    for (auto a : library.artists) {
-//        for (auto alb : a->albums) {
-//            std::cout << "NN: " << alb->albumArtwork->albumName << " " << std::endl;;
-//        }
-//        std::cout << std::endl;
-//    }
 }

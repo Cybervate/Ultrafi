@@ -16,8 +16,8 @@ Album * Artist::addAlbum(std::string albName) {
     return newAlbum;
 }
 
-Song * Album::addSong(std::string songName, std::string songPath) {
-    Song * newSong = new Song(songName, name, songPath);
+Song * Album::addSong(std::string songName, std::string songPath, unsigned int songTrack) {
+    Song * newSong = new Song(songName, name, songPath, songTrack);
     songs.push_back(newSong);
     return newSong;
 }
@@ -36,6 +36,3 @@ Artwork * Artlib::addArtwork(QPixmap pixmap, std::string artworkAlbumName) {
 void Album::addArtwork(Artwork * tAlbumArtwork) {
     albumArtwork = tAlbumArtwork;
 }
-//void Song::setTrack(unsigned int aTrack) {
-//    track = aTrack;
-//}

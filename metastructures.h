@@ -32,10 +32,11 @@ public:
 
     unsigned int track = 0;
 
-    Song(std::string songName, std::string tAlbumName, std::string songPath) {
+    Song(std::string songName, std::string tAlbumName, std::string songPath, unsigned int tTrack) {
         name = songName;
         albumName = tAlbumName;
         path = songPath;
+        track = tTrack;
     }
 
 };
@@ -50,7 +51,7 @@ public:
         name = albumName;
     }
 
-    Song * addSong(std::string songName, std::string songPath);
+    Song * addSong(std::string songName, std::string songPath, unsigned int songTrack);
     void addArtwork(Artwork * tAlbumArtwork);
 };
 

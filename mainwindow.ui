@@ -434,9 +434,9 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>0</y>
+      <y>40</y>
       <width>82</width>
-      <height>121</height>
+      <height>51</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -547,9 +547,9 @@
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>0</y>
+      <y>40</y>
       <width>82</width>
-      <height>121</height>
+      <height>51</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -566,9 +566,9 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>0</y>
+      <y>40</y>
       <width>82</width>
-      <height>121</height>
+      <height>51</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -614,6 +614,25 @@
       <widget class="QLabel" name="LogoLabel">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_11">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>80</y>
+      <width>221</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_11">
+     <item>
+      <widget class="QPushButton" name="ShuffleButton">
+       <property name="text">
+        <string>Shuffle Songs</string>
        </property>
       </widget>
      </item>

@@ -9,7 +9,6 @@
 #include <QPixmap>
 
 #include "metastructures.h"
-#include "audioengine.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     void callSkip();
+    void handleSongFinished();
     ~MainWindow();
 
 private slots:
@@ -55,23 +55,19 @@ private slots:
 
     void on_volumeSlider_valueChanged(int value);
 
+    void on_ShuffleButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     QFileSystemModel *FSmodel = new QFileSystemModel;
 
-    Song * curSongRef;
     QListWidgetItem * curItemRef = NULL;
-
-    std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
-    irrklang::ik_u32 songPos = 0;
-
-    irrklang::ISoundEngine* audioEngine = audioInit();
-    irrklang::ISound * music = NULL;
+//    std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
 
     void ScrubTick();
     void handleSongPlay(Song * itemSong);
-    void handleCoverFind(std::string albumName);
+    void handleCoverFind(Album * album);
     void handleAlbumTab(Album * albumItem);
 
 };

@@ -6,6 +6,8 @@
 #include "audioengine.h"
 
 #include <iostream>
+#include <time.h>
+#include <stdlib.h>
 #include <qlabel.h>
 #include <QTimer>
 
@@ -18,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Ultrafi");
 
     QPixmap logoPixmap("/home/mmb/Code/Ultrafi/Ultrafi/Covers/resizedlogo");
     ui->LogoLabel->setPixmap(logoPixmap);
@@ -72,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::ScrubTick() {
-    if (music) {
+    if (music && !music->isFinished()) {
         ui->ScrubbingSlider->setValue( (int)(((float)music->getPlayPosition() / (float)music->getPlayLength()) * 1000) );
 
         // Sets time label, ensures leading zero infront of single digit seconds
@@ -94,9 +97,16 @@ MainWindow::~MainWindow()
 void MainWindow::on_playButton_clicked()
 {
     if (music == NULL || music->getIsPaused()) {
-        music = playAudioFile(audioEngine, curSongPath.c_str());
-        music->setPlayPosition(songPos);
+
+        if (curSongRef == NULL) {
+            curSongRef = library.artists.front()->albums.front()->songs.front();
+        }
+
+        handleSongPlay(curSongRef);
         ui->playButton->setText("Pause");
+    }
+    else if (music->isFinished()) {
+
     }
     else {
         songPos = music->getPlayPosition();
@@ -114,54 +124,57 @@ void MainWindow::on_volumeSlider_valueChanged(int value)
 
 void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
 {
+    shuffle = false;
     Song * itemSong = item->data(SONGROLE).value<Song*>();
     handleSongPlay(itemSong);
     curItemRef = item;
 }
 
 void MainWindow::customAlbumSlot(QListWidgetItem * item) {
+    shuffle = false;
     Song * songItem = item->data(Qt::UserRole).value<Song*>();
     handleSongPlay(songItem);
     curItemRef = item;
 }
 
 void MainWindow::handleSongPlay(Song * itemSong) {
-    curSongPath = itemSong->path;
+//    curSongPath = itemSong->path;
+    if (curSongRef != NULL) {
+        songsPlayed.push_back(curSongRef);
+    }
 
-    MainWindow::on_playButton_clicked();
-    songPos = 0;
-    MainWindow::on_playButton_clicked();
-
-    handleCoverFind(itemSong->albumName);
+    prevSongRef = curSongRef;
     curSongRef = itemSong;
+    songPos = 0;
+
+    if (music) {
+        music->stop();
+        audioEngine->stopAllSounds();
+        music->drop();
+    }
+
+    playAudioFile(audioEngine, curSongRef->path.c_str());
+
+    handleCoverFind(itemSong->album);
+
+    ui->playButton->setText("Pause");
 
     ScrubTick();
 }
 
-void MainWindow::handleCoverFind(std::string albumName) {
-    bool artworkFound = false;
-    for (auto &art : library.artists) {
-        for (auto &alb : art->albums) {
-            if (alb->name == albumName) {
-                artworkFound = true;
-                ui->coverLabel->setPixmap(alb->albumArtwork->albumCover);
-                goto artworkNotFound;
-            }
-        }
+void MainWindow::handleCoverFind(Album * album) {
+    if (!album->albumArtwork->albumCover.size().isEmpty()) {
+        ui->coverLabel->setPixmap(album->albumArtwork->albumCover);
     }
-
-    artworkNotFound:
-        if (!artworkFound) {
-            ui->coverLabel->setPixmap(artLibrary.albumCovers.front()->albumCover);
-        }
-
-        ui->coverLabel->setScaledContents(true);
+    else {
+        ui->coverLabel->setPixmap(artLibrary.albumCovers.front()->albumCover);
+    }
 }
 
 
 void MainWindow::on_ScrubbingSlider_actionTriggered(int action)
 {
-    // 3 is step add 4 is step subtract on the slider 7 is move
+    // 3 is step , 4 is step subtract, on the slider 7 is move
     if (action == 7 || action == 3 || action == 4) {
             music->setPlayPosition((float)music->getPlayLength() * ((float)this->ui->ScrubbingSlider->sliderPosition() / 1000));
     }
@@ -229,7 +242,7 @@ void MainWindow::handleAlbumTab(Album * albumItem) {
     ui->tabWidget->addTab(newTab, QString::fromStdString(albumItem->name));
     ui->tabWidget->setCurrentWidget(newTab);
 
-    handleCoverFind(albumItem->name);
+    handleCoverFind(albumItem);
 }
 
 void MainWindow::on_SkipButton_clicked()
@@ -262,6 +275,15 @@ void MainWindow::callSkip() {
 void MainWindow::on_BackButton_clicked()
 {
     if (curItemRef == NULL) return;
+
+    // Causes crach when shuffle clicked multiple times
+//    if (shuffle && !songsPlayed.empty()) {
+//        curSongRef = songsPlayed.back();
+//        songsPlayed.erase(songsPlayed.end());
+//        handleSongPlay(curSongRef);
+//        return;
+//    }
+
     if (music->getPlayPosition() < 5000) {
         QListWidget* parent = dynamic_cast<QListWidget*>(curItemRef->listWidget());
 
@@ -287,6 +309,57 @@ void MainWindow::on_BackButton_clicked()
 
 }
 
+void MainWindow::on_ShuffleButton_clicked()
+{
+    shuffle = true;
+
+    QListWidget * currentTabList;
+
+    std::string tabType = ui->tabWidget->currentWidget()->metaObject()->className();
+
+    // One of the original tabs: Artists, Albums, Songs
+    if (tabType == "QWidget") {
+        currentTabList = qobject_cast<QListWidget*>(ui->tabWidget->currentWidget()->findChild<QListWidget*>());
+    }
+    // New tab created by user click
+    else if (tabType == "QListWidget") {
+        currentTabList = qobject_cast<QListWidget*>(ui->tabWidget->currentWidget());
+    }
+    else {
+        return;
+    }
+
+    std::string listType = currentTabList->item(0)->data(Qt::UserRole).typeName();
+
+    unsigned int randSongNumber = rand();
+
+    if (listType == "Song*") {
+
+        randSongNumber %= currentTabList->count();
+
+        handleSongPlay(currentTabList->item(randSongNumber)->data(Qt::UserRole).value<Song*>());
+    }
+    else if (listType == "Album*") {
+
+        // Looks terrible, essentially handleSongPlay(randomAlbum->randomSong)
+        handleSongPlay(
+            currentTabList->item(randSongNumber % currentTabList->count())->data(Qt::UserRole).value<Album*>()
+            ->songs[randSongNumber % currentTabList->item(randSongNumber % currentTabList->count())->data(Qt::UserRole).value<Album*>()->songs.size()]
+            );
+
+    }
+    else if (listType == "Artist*") {
+
+        randSongNumber %= ui->songList->count();
+
+        handleSongPlay(ui->songList->item(randSongNumber)->data(Qt::UserRole).value<Song*>());
+    }
+}
+
+void handleSongFinished() {
+
+}
+
 // UNUSED SLOTS
 void MainWindow::on_ScrubbingSlider_sliderPressed()
 {
@@ -306,11 +379,3 @@ void MainWindow::on_volumeSlider_sliderMoved(int position)
 {
 
 }
-
-
-
-
-
-
-
-

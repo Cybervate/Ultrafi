@@ -57,12 +57,19 @@ private slots:
 
     void on_ShuffleButton_clicked();
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
 
     QFileSystemModel *FSmodel = new QFileSystemModel;
 
     QListWidgetItem * curItemRef = NULL;
+
+    QListWidget * curList = NULL;
+
+    std::string curTabName = "";
+
 //    std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
 
     void ScrubTick();

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <qlabel.h>
 #include <QTimer>
+#include <bits/stdc++.h>
 
 #define SONGROLE Qt::UserRole
 #define ALBUMROLE Qt::UserRole
@@ -86,7 +87,17 @@ void MainWindow::ScrubTick() {
         std::string time = std::to_string((music->getPlayPosition() / 60000)) + ":" + seconds;
         ui->TimeLabel->setText(QString::fromStdString(time));
     }
-    if (curItemRef != NULL) ui->TitleLabel->setText(QString::fromStdString(curSongRef->artistName + " - " + curSongRef->name));
+    if (curSongRef != NULL) {
+        ui->TitleLabel->setText(QString::fromStdString(curSongRef->artistName + " - " + curSongRef->name));
+    }
+    ui->ShuffleButton->setText("Shuffle " + ui->tabWidget->tabText(ui->tabWidget->currentIndex()));
+
+    if (shuffle && !curTabName.empty()) {
+        ui->ShuffleLabel->setText("Currently Shuffling: " + QString::fromStdString(curTabName));
+    }
+    else {
+        ui->ShuffleLabel->setText("");
+    }
 }
 
 MainWindow::~MainWindow()
@@ -197,6 +208,7 @@ void MainWindow::on_artistList_itemDoubleClicked(QListWidgetItem *item)
     }
 
     connect(newTab, &QListWidget::itemDoubleClicked, this, &MainWindow::customArtistSlot);
+    newTab->setAlternatingRowColors(true);
     ui->tabWidget->addTab(newTab, QString::fromStdString(itemArtist->name));
     ui->tabWidget->setCurrentWidget(newTab);
 }
@@ -239,6 +251,9 @@ void MainWindow::handleAlbumTab(Album * albumItem) {
     }
 
     connect(newTab, &QListWidget::itemDoubleClicked, this, &MainWindow::customAlbumSlot);
+
+    newTab->setAlternatingRowColors(true);
+
     ui->tabWidget->addTab(newTab, QString::fromStdString(albumItem->name));
     ui->tabWidget->setCurrentWidget(newTab);
 
@@ -247,7 +262,20 @@ void MainWindow::handleAlbumTab(Album * albumItem) {
 
 void MainWindow::on_SkipButton_clicked()
 {
-    if (curItemRef == NULL) return;
+    if (curSongRef == NULL) return;
+
+    if (shuffle) {
+        if (shuffleQueueIndex + 1 >= shuffleQueue.size()) {
+            std::shuffle(shuffleQueue.begin(), shuffleQueue.end(), std::default_random_engine(rand()));
+            shuffleQueueIndex = 0;
+        }
+        else {
+            shuffleQueueIndex++;
+        }
+
+        handleSongPlay(shuffleQueue[shuffleQueueIndex]);
+        return;
+    }
 
     QListWidget* parent = dynamic_cast<QListWidget*>(curItemRef->listWidget());
 
@@ -274,17 +302,29 @@ void MainWindow::callSkip() {
 
 void MainWindow::on_BackButton_clicked()
 {
-    if (curItemRef == NULL) return;
 
-    // Causes crach when shuffle clicked multiple times
-//    if (shuffle && !songsPlayed.empty()) {
-//        curSongRef = songsPlayed.back();
-//        songsPlayed.erase(songsPlayed.end());
-//        handleSongPlay(curSongRef);
-//        return;
-//    }
 
     if (music->getPlayPosition() < 5000) {
+
+        if (shuffle) {
+            if (shuffleQueue.size() <= 1) {
+                return;
+            }
+
+            if (shuffleQueueIndex <= 0) {
+                std::shuffle(shuffleQueue.begin(), shuffleQueue.end(), std::default_random_engine(rand()));
+                shuffleQueueIndex = shuffleQueue.size() - 1;
+            }
+            else {
+                shuffleQueueIndex--;
+            }
+
+            handleSongPlay(shuffleQueue[shuffleQueueIndex]);
+            return;
+        }
+
+        if (curItemRef == NULL) return;
+
         QListWidget* parent = dynamic_cast<QListWidget*>(curItemRef->listWidget());
 
         if (parent) {
@@ -304,6 +344,7 @@ void MainWindow::on_BackButton_clicked()
         }
     }
     else {
+        if (curItemRef == NULL) return;
         music->setPlayPosition(songPos);
     }
 
@@ -312,6 +353,8 @@ void MainWindow::on_BackButton_clicked()
 void MainWindow::on_ShuffleButton_clicked()
 {
     shuffle = true;
+
+    curTabName = ui->tabWidget->tabText(ui->tabWidget->currentIndex()).toStdString();
 
     QListWidget * currentTabList;
 
@@ -325,35 +368,65 @@ void MainWindow::on_ShuffleButton_clicked()
     else if (tabType == "QListWidget") {
         currentTabList = qobject_cast<QListWidget*>(ui->tabWidget->currentWidget());
     }
+    // Should not happen
     else {
         return;
     }
 
-    std::string listType = currentTabList->item(0)->data(Qt::UserRole).typeName();
+    // Still on same tab
+    if (curList == currentTabList) {
 
-    unsigned int randSongNumber = rand();
+        if (shuffleQueueIndex + 1 >= shuffleQueue.size()) {
+            std::shuffle(shuffleQueue.begin(), shuffleQueue.end(), std::default_random_engine(rand()));
+            shuffleQueueIndex = 0;
+        }
+        else {
+            shuffleQueueIndex++;
+        }
 
-    if (listType == "Song*") {
-
-        randSongNumber %= currentTabList->count();
-
-        handleSongPlay(currentTabList->item(randSongNumber)->data(Qt::UserRole).value<Song*>());
+        handleSongPlay(shuffleQueue[shuffleQueueIndex]);
     }
-    else if (listType == "Album*") {
+    else {
+        curList = currentTabList;
 
-        // Looks terrible, essentially handleSongPlay(randomAlbum->randomSong)
-        handleSongPlay(
-            currentTabList->item(randSongNumber % currentTabList->count())->data(Qt::UserRole).value<Album*>()
-            ->songs[randSongNumber % currentTabList->item(randSongNumber % currentTabList->count())->data(Qt::UserRole).value<Album*>()->songs.size()]
-            );
+        std::string listType = currentTabList->item(0)->data(Qt::UserRole).typeName();
+
+        shuffleQueue.clear();
+
+        if (listType == "Song*") {
+            for (int i = 0; i < currentTabList->count(); i++) {
+                shuffleQueue.push_back(currentTabList->item(i)->data(Qt::UserRole).value<Song*>());
+            }
+        }
+        else if(listType == "Album*") {
+            for (int i = 0; i < currentTabList->count(); i++) {
+                for (auto song : currentTabList->item(i)->data(Qt::UserRole).value<Album*>()->songs) {
+                    shuffleQueue.push_back(song);
+                }
+            }
+        }
+        else if (listType == "Artist*") {
+            for (int i = 0; i < currentTabList->count(); i++) {
+                for (auto alb : currentTabList->item(i)->data(Qt::UserRole).value<Artist*>()->albums) {
+                    for (auto song : alb->songs) {
+                        shuffleQueue.push_back(song);
+                    }
+                }
+            }
+        }
+        std::shuffle(shuffleQueue.begin(), shuffleQueue.end(), std::default_random_engine(rand()));
+
+        shuffleQueueIndex = 0;
+
+        handleSongPlay(shuffleQueue[shuffleQueueIndex]);
+
 
     }
-    else if (listType == "Artist*") {
+}
 
-        randSongNumber %= ui->songList->count();
-
-        handleSongPlay(ui->songList->item(randSongNumber)->data(Qt::UserRole).value<Song*>());
-    }
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    ScrubTick();
 }
 
 void handleSongFinished() {

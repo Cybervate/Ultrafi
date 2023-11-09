@@ -7,6 +7,8 @@ irrklang::ik_u32 songPos = 0;
 Song * prevSongRef = NULL;
 Song * curSongRef = NULL;
 std::vector<Song*> songsPlayed = {};
+unsigned int shuffleQueueIndex = 0;
+std::vector<Song*> shuffleQueue = {};
 bool shuffle = false;
 
 using namespace irrklang;

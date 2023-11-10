@@ -11,6 +11,8 @@ unsigned int shuffleQueueIndex = 0;
 std::vector<Song*> shuffleQueue = {};
 bool shuffle = false;
 
+irrklang::ISoundEffectControl * fx = 0;
+
 using namespace irrklang;
 
 //ISoundStopEventReceiver * soundFinishedCallback() {
@@ -52,8 +54,15 @@ ISoundEngine* audioInit() {
 }
 
 ISound * playAudioFile(ISoundEngine* engine, const char * path) {
-    music = engine->play3D(path, vec3df(0,0,0), false, false, true);
+    music = engine->play3D(path, vec3df(0,0,0), false, false, true, ESM_AUTO_DETECT, true);
 //    music->setSoundStopEventReceiver(, 0);
     music->setSoundStopEventReceiver(&soundFinishedCallback);
     music->setPlayPosition(songPos);
+    addReverb();
+}
+
+void addReverb() {
+    fx = music->getSoundEffectControl();
+    if (!fx->isWavesReverbSoundEffectEnabled())
+        fx->enableWavesReverbSoundEffect();
 }

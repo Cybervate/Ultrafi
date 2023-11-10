@@ -18,4 +18,6 @@ extern irrklang::ISoundEngine* audioEngine;
 extern irrklang::ISound * music;
 extern irrklang::ik_u32 songPos;
 
+void addReverb();
+
 #endif // AUDIOENGINE_H

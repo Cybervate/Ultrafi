@@ -8,6 +8,8 @@
 #include <QListWidgetItem>
 #include <QPixmap>
 
+#include "reverbdialog.h"
+
 #include "metastructures.h"
 
 QT_BEGIN_NAMESPACE
@@ -59,10 +61,12 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_actionReverb_triggered();
+
 private:
     Ui::MainWindow *ui;
 
-    QFileSystemModel *FSmodel = new QFileSystemModel;
+    ReverbDialog * reverbDialog = new ReverbDialog(this);
 
     QListWidgetItem * curItemRef = NULL;
 

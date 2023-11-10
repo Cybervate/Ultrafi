@@ -12,10 +12,6 @@
 #include <QTimer>
 #include <bits/stdc++.h>
 
-#define SONGROLE Qt::UserRole
-#define ALBUMROLE Qt::UserRole
-#define ARTISTROLE Qt::UserRole
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -43,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
         if (!art->albums.empty()) {
             QListWidgetItem * artistItem = new QListWidgetItem();
             artistItem->setText(QString::fromStdString(art->name));
-            artistItem->setData(ARTISTROLE, QVariant::fromValue(art));
+            artistItem->setData(Qt::UserRole, QVariant::fromValue(art));
             ui->artistList->addItem(artistItem);
         }
 
@@ -52,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
             if (!alb->songs.empty()) {
                 QListWidgetItem * albumItem = new QListWidgetItem();
                 albumItem->setText(QString::fromStdString(alb->name));
-                albumItem->setData(ALBUMROLE, QVariant::fromValue(alb));
+                albumItem->setData(Qt::UserRole, QVariant::fromValue(alb));
                 ui->albumList->addItem(albumItem);
             }
 
@@ -67,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
                     songItem->setText((QString::fromStdString(art->name + " - " + song->name)));
                 }
 
-                songItem->setData(SONGROLE, QVariant::fromValue(song));
+                songItem->setData(Qt::UserRole, QVariant::fromValue(song));
 
                 ui->songList->addItem(songItem);
             }
@@ -136,7 +132,7 @@ void MainWindow::on_volumeSlider_valueChanged(int value)
 void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
 {
     shuffle = false;
-    Song * itemSong = item->data(SONGROLE).value<Song*>();
+    Song * itemSong = item->data(Qt::UserRole).value<Song*>();
     handleSongPlay(itemSong);
     curItemRef = item;
 }
@@ -194,7 +190,7 @@ void MainWindow::on_ScrubbingSlider_actionTriggered(int action)
 
 void MainWindow::on_artistList_itemDoubleClicked(QListWidgetItem *item)
 {
-    Artist * itemArtist = item->data(ARTISTROLE).value<Artist*>();
+    Artist * itemArtist = item->data(Qt::UserRole).value<Artist*>();
 
     QListWidget * newTab = new QListWidget();
 
@@ -429,6 +425,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     ScrubTick();
 }
 
+void MainWindow::on_actionReverb_triggered()
+{
+    reverbDialog->show();
+}
+
 void handleSongFinished() {
 
 }
@@ -452,3 +453,6 @@ void MainWindow::on_volumeSlider_sliderMoved(int position)
 {
 
 }
+
+
+

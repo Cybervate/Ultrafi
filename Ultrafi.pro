@@ -13,16 +13,19 @@ SOURCES += \
     folderreader.cpp \
     main.cpp \
     mainwindow.cpp \
-    metastructures.cpp
+    metastructures.cpp \
+    reverbdialog.cpp
 
 HEADERS += \
     audioengine.h \
     folderreader.h \
     mainwindow.h \
-    metastructures.h
+    metastructures.h \
+    reverbdialog.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    reverbdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     audioengine.cpp \
+    equalizer.cpp \
     folderreader.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,12 +19,14 @@ SOURCES += \
 
 HEADERS += \
     audioengine.h \
+    equalizer.h \
     folderreader.h \
     mainwindow.h \
     metastructures.h \
     reverbdialog.h
 
 FORMS += \
+    equalizer.ui \
     mainwindow.ui \
     reverbdialog.ui
 
@@ -34,7 +37,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 LIBS += -ltag
 
-unix:!macx: LIBS += -L$$PWD/../../../Desktop/irrKlang-64bit-1.6.0/bin/linux-gcc-64/ -lIrrKlang
+unix:!macx: LIBS += -L$$PWD/../../../Desktop/irrKlang-64bit-1.6.0/bin/linux-gcc-64/ -lIrrKlang -lstk -lvlc
 unix:!macx: LIBS += -L$$PWD/../../../Desktop/irrKlang-64bit-1.6.0/lib/
 
 INCLUDEPATH += $$PWD/../../../Desktop/irrKlang-64bit-1.6.0/include

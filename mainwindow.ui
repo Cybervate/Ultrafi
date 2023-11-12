@@ -705,6 +705,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_Library_Folder"/>
+    <addaction name="actionAdd_From_YouTube_URL"/>
    </widget>
    <widget class="QMenu" name="menuEffects">
     <property name="title">
@@ -754,6 +755,11 @@
   <action name="actionPan">
    <property name="text">
     <string>Pan</string>
+   </property>
+  </action>
+  <action name="actionAdd_From_YouTube_URL">
+   <property name="text">
+    <string>Add From YouTube URL</string>
    </property>
   </action>
  </widget>

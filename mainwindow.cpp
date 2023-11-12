@@ -34,6 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::ScrubTick));
     timer->start(1000);
 
+    qAudioInit();
+
+    connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MainWindow::handleSongFinished);
+
     for (auto &art : library.artists) {
 
         if (!art->albums.empty()) {
@@ -69,23 +73,26 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
     }
+
+    curSongRef = library.artists.front()->albums.front()->songs.front();
+
 }
 
 void MainWindow::ScrubTick() {
-    if (music && !music->isFinished()) {
-        ui->ScrubbingSlider->setValue( (int)(((float)music->getPlayPosition() / (float)music->getPlayLength()) * 1000) );
 
-        // Sets time label, ensures leading zero infront of single digit seconds
-        std::string seconds = std::to_string((music->getPlayPosition() / 1000) % 60);
-        if (seconds.length() < 2) {
-            seconds = '0' + seconds;
-        }
-        std::string time = std::to_string((music->getPlayPosition() / 60000)) + ":" + seconds;
-        ui->TimeLabel->setText(QString::fromStdString(time));
+    ui->ScrubbingSlider->setValue( (int)(((float)mediaPlayer->position() / (float)mediaPlayer->duration()) * 1000));
+
+    std::string seconds = std::to_string((mediaPlayer->position() / 1000) % 60);
+    if (seconds.length() < 2) {
+        seconds = '0' + seconds;
     }
+    std::string time = std::to_string((mediaPlayer->position() / 60000)) + ":" + seconds;
+    ui->TimeLabel->setText(QString::fromStdString(time));
+
     if (curSongRef != NULL) {
         ui->TitleLabel->setText(QString::fromStdString(curSongRef->artistName + " - " + curSongRef->name));
     }
+
     ui->ShuffleButton->setText("Shuffle " + ui->tabWidget->tabText(ui->tabWidget->currentIndex()));
 
     if (shuffle && !curTabName.empty()) {
@@ -94,6 +101,7 @@ void MainWindow::ScrubTick() {
     else {
         ui->ShuffleLabel->setText("");
     }
+
 }
 
 MainWindow::~MainWindow()
@@ -103,21 +111,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_playButton_clicked()
 {
-    if (music == NULL || music->getIsPaused()) {
+    if (!mediaPlayer->isPlaying()) {
 
         if (curSongRef == NULL) {
             curSongRef = library.artists.front()->albums.front()->songs.front();
         }
 
-        handleSongPlay(curSongRef);
+        if (mediaPlayer->hasAudio()) {
+            mediaPlayer->play();
+        }
+        else {
+            handleSongPlay(curSongRef);
+        }
+
+
         ui->playButton->setText("Pause");
     }
-    else if (music->isFinished()) {
-
-    }
     else {
-        songPos = music->getPlayPosition();
-        audioEngine->setAllSoundsPaused();
+        mediaPlayer->pause();
         ui->playButton->setText("Play");
     }
 
@@ -125,15 +136,15 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::on_volumeSlider_valueChanged(int value)
 {
-    audioEngine->setSoundVolume(((float)value)/99);
+    audioOutput->setVolume((float)value/99);
 }
 
 
 void MainWindow::on_songList_itemDoubleClicked(QListWidgetItem *item)
 {
     shuffle = false;
-    Song * itemSong = item->data(Qt::UserRole).value<Song*>();
-    handleSongPlay(itemSong);
+    Song * songItem = item->data(Qt::UserRole).value<Song*>();
+    handleSongPlay(songItem);
     curItemRef = item;
 }
 
@@ -145,24 +156,11 @@ void MainWindow::customAlbumSlot(QListWidgetItem * item) {
 }
 
 void MainWindow::handleSongPlay(Song * itemSong) {
-//    curSongPath = itemSong->path;
-    if (curSongRef != NULL) {
-        songsPlayed.push_back(curSongRef);
-    }
 
-    prevSongRef = curSongRef;
     curSongRef = itemSong;
-    songPos = 0;
 
-    if (music) {
-        music->stop();
-        audioEngine->stopAllSounds();
-        music->drop();
-    }
-
-    playAudioFile(audioEngine, curSongRef->path.c_str());
-
-    handleCoverFind(itemSong->album);
+    qPlayFile(itemSong->path);
+    mediaPlayer->play();
 
     ui->playButton->setText("Pause");
 
@@ -181,9 +179,9 @@ void MainWindow::handleCoverFind(Album * album) {
 
 void MainWindow::on_ScrubbingSlider_actionTriggered(int action)
 {
-    // 3 is step , 4 is step subtract, on the slider 7 is move
+     // 3 is step , 4 is step subtract, on the slider 7 is move
     if (action == 7 || action == 3 || action == 4) {
-            music->setPlayPosition((float)music->getPlayLength() * ((float)this->ui->ScrubbingSlider->sliderPosition() / 1000));
+        mediaPlayer->setPosition((float)mediaPlayer->duration() * ((float)this->ui->ScrubbingSlider->sliderPosition() / 1000));
     }
     ScrubTick();
 }
@@ -259,6 +257,10 @@ void MainWindow::handleAlbumTab(Album * albumItem) {
 void MainWindow::on_SkipButton_clicked()
 {
     if (curSongRef == NULL) return;
+    if (curItemRef == NULL) {
+            // TODO should make this finish currnt song
+            return;
+    }
 
     if (shuffle) {
         if (shuffleQueueIndex + 1 >= shuffleQueue.size()) {
@@ -298,9 +300,7 @@ void MainWindow::callSkip() {
 
 void MainWindow::on_BackButton_clicked()
 {
-
-
-    if (music->getPlayPosition() < 5000) {
+    if (mediaPlayer->position() < 5000) {
 
         if (shuffle) {
             if (shuffleQueue.size() <= 1) {
@@ -341,9 +341,9 @@ void MainWindow::on_BackButton_clicked()
     }
     else {
         if (curItemRef == NULL) return;
-        music->setPlayPosition(songPos);
+        mediaPlayer->setPosition(0);
     }
-
+    ScrubTick();
 }
 
 void MainWindow::on_ShuffleButton_clicked()
@@ -430,8 +430,15 @@ void MainWindow::on_actionReverb_triggered()
     reverbDialog->show();
 }
 
-void handleSongFinished() {
+void MainWindow::handleSongFinished(QMediaPlayer::MediaStatus status) {
+    if (status == QMediaPlayer::EndOfMedia) {
+        callSkip();
+    }
+}
 
+void MainWindow::on_actionEqualizer_triggered()
+{
+    eqDialog->show();
 }
 
 // UNUSED SLOTS
@@ -453,6 +460,3 @@ void MainWindow::on_volumeSlider_sliderMoved(int position)
 {
 
 }
-
-
-

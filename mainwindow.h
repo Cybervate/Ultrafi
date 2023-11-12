@@ -7,8 +7,12 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QPixmap>
+#include <QMediaPlayer>
+#include <QFileDialog>
+#include <QAudioOutput>
 
 #include "reverbdialog.h"
+#include "equalizer.h"
 
 #include "metastructures.h"
 
@@ -23,7 +27,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     void callSkip();
-    void handleSongFinished();
     ~MainWindow();
 
 private slots:
@@ -63,10 +66,13 @@ private slots:
 
     void on_actionReverb_triggered();
 
+    void on_actionEqualizer_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     ReverbDialog * reverbDialog = new ReverbDialog(this);
+    equalizer * eqDialog = new equalizer(this);
 
     QListWidgetItem * curItemRef = NULL;
 
@@ -80,6 +86,8 @@ private:
     void handleSongPlay(Song * itemSong);
     void handleCoverFind(Album * album);
     void handleAlbumTab(Album * albumItem);
+
+    void handleSongFinished(QMediaPlayer::MediaStatus status);
 
 };
 #endif // MAINWINDOW_H

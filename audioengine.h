@@ -1,23 +1,25 @@
 #ifndef AUDIOENGINE_H
 #define AUDIOENGINE_H
-#include <irrKlang.h>
 #include "metastructures.h"
 
-irrklang::ISoundEngine* audioInit();
-irrklang::ISound * playAudioFile(irrklang::ISoundEngine* engine, const char * path);
+#include <QAudioOutput>
+#include <QMediaPlayer>
+
+extern QMediaPlayer * mediaPlayer;
+extern QAudioOutput * audioOutput;
 
 extern Song * prevSongRef;
 extern Song * curSongRef;
-extern std::vector<Song*> songsPlayed;
 extern unsigned int shuffleQueueIndex;
 extern std::vector<Song*> shuffleQueue;
 
 extern bool shuffle;
 
-extern irrklang::ISoundEngine* audioEngine;
-extern irrklang::ISound * music;
-extern irrklang::ik_u32 songPos;
-
 void addReverb();
+
+void qPlayFile (std::string path);
+void qAudioInit();
+
+void setEq(float b1, float b2, float b3, float b4, float b5, float b6, float b7, float b8, float b9, float b10);
 
 #endif // AUDIOENGINE_H

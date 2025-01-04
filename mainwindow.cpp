@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->coverLabel->setScaledContents(true);
 
     ytdlDialog->setPath(path);
-    readFolder(path);
+
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::ScrubTick));
@@ -47,6 +47,17 @@ MainWindow::MainWindow(QWidget *parent)
     qAudioInit();
 
     connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MainWindow::handleSongFinished);
+
+    loadLibrary();
+
+}
+
+
+void MainWindow::loadLibrary() {
+    ui->artistList->clear();
+    ui->albumList->clear();
+    ui->songList->clear();
+    readFolder(path);
 
     for (auto &art : library.artists) {
 
@@ -495,4 +506,13 @@ void MainWindow::on_ShuffleButton_clicked()
 
 
 
+
+
+void MainWindow::on_actionOpen_Library_Folder_triggered()
+{
+    QString folderPath = QFileDialog::getExistingDirectory(nullptr, "Select Folder");
+    std::cout << folderPath.toStdString() << std::endl;
+    path = folderPath.toStdString();
+    loadLibrary();
+}
 

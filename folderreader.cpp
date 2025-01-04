@@ -188,6 +188,8 @@ void sortAlbums() {
 void readFolder(std::string path) {
 //    std::string path = "/home/mmb/Desktop/UltrafiLibrary";
 
+    library.reset();
+
     folderLoop(path);
     sortAlbums();
 

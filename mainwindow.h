@@ -29,7 +29,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
     void callSkip();
-    std::string path = "/home/mmb/Desktop/UltrafiLibrary";
+//    std::string path = "/home/mmb/Music";
+    std::string path = QFileDialog::getExistingDirectory(nullptr, "Select Folder").toStdString();
 
     ~MainWindow();
 
@@ -76,6 +77,8 @@ private slots:
 
     void on_actionAdd_From_YouTube_URL_triggered();
 
+    void on_actionOpen_Library_Folder_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -100,6 +103,7 @@ private:
 
 //    std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
 
+    void loadLibrary();
     void ScrubTick();
     void handleSongPlay(Song * itemSong);
     void handleCoverFind(Album * album);

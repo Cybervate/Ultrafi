@@ -4,6 +4,10 @@
 Library library;
 Artlib artLibrary;
 
+void Library::reset() {
+    artists = {new Artist("Unknown Artist")};
+}
+
 Artist * Library::addArtist(std::string aName) {
     Artist * newArtist = new Artist(aName);
     artists.push_back(newArtist);

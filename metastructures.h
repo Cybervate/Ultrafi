@@ -92,6 +92,7 @@ public:
         artists = {new Artist("Unknown Artist")};
     }
 
+    void reset();
     Artist * addArtist(std::string aName);
 };
 

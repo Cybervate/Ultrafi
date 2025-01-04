@@ -30,7 +30,7 @@ public:
 
     void callSkip();
 //    std::string path = "/home/mmb/Music";
-    std::string path = QFileDialog::getExistingDirectory(nullptr, "Select Folder").toStdString();
+    std::string path = QFileDialog::getExistingDirectory(nullptr, "Select Music Library Folder").toStdString();
 
     ~MainWindow();
 

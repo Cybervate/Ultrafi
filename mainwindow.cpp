@@ -510,7 +510,7 @@ void MainWindow::on_ShuffleButton_clicked()
 
 void MainWindow::on_actionOpen_Library_Folder_triggered()
 {
-    QString folderPath = QFileDialog::getExistingDirectory(nullptr, "Select Folder");
+    QString folderPath = QFileDialog::getExistingDirectory(nullptr, "Select Music Library Folder");
     std::cout << folderPath.toStdString() << std::endl;
     path = folderPath.toStdString();
     loadLibrary();

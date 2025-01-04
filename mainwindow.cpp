@@ -23,12 +23,22 @@ MainWindow::MainWindow(QWidget *parent)
     ui->LogoLabel->setPixmap(logoPixmap);
     ui->LogoLabel->setScaledContents(true);
 
+    ui->playButton->setIcon(playIcon);
+    ui->playButton->setIconSize(QSize(30, 30));
+    ui->SkipButton->setIcon(forwardIcon);
+    ui->SkipButton->setIconSize(QSize(20, 20));
+    ui->BackButton->setIcon(backIcon);
+    ui->BackButton->setIconSize(QSize(20, 20));
+    ui->ShuffleButton->setIcon(shuffleIcon);
+    //    ui->volumeLogo->setIcon(volumeIcon);
+
     artLibrary.artlibInit();
 
     ui->coverLabel->setPixmap(artLibrary.albumCovers.front()->albumCover);
     ui->coverLabel->setScaledContents(true);
 
-    readFolder();
+    ytdlDialog->setPath(path);
+    readFolder(path);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::ScrubTick));
@@ -124,12 +134,13 @@ void MainWindow::on_playButton_clicked()
             handleSongPlay(curSongRef);
         }
 
-
-        ui->playButton->setText("Pause");
+        ui->playButton->setIcon(pauseIcon);
     }
     else {
         mediaPlayer->pause();
-        ui->playButton->setText("Play");
+//        ui->playButton->setText("Play");
+        ui->playButton->setIcon(playIcon);
+
     }
 
 }
@@ -137,6 +148,12 @@ void MainWindow::on_playButton_clicked()
 void MainWindow::on_volumeSlider_valueChanged(int value)
 {
     audioOutput->setVolume((float)value/99);
+    if (value == 0) {
+        ui->volumeLogo->setPixmap(mutePixmap);
+    }
+    else {
+        ui->volumeLogo->setPixmap(volumePixmap);
+    }
 }
 
 
@@ -162,7 +179,9 @@ void MainWindow::handleSongPlay(Song * itemSong) {
     qPlayFile(itemSong->path);
     mediaPlayer->play();
 
-    ui->playButton->setText("Pause");
+    ui->playButton->setIcon(pauseIcon);
+
+    handleCoverFind(itemSong->album);
 
     ScrubTick();
 }
@@ -259,7 +278,7 @@ void MainWindow::on_SkipButton_clicked()
     if (curSongRef == NULL) return;
     if (curItemRef == NULL) {
             // TODO should make this finish currnt song
-            return;
+//            return;
     }
 
     if (shuffle) {
@@ -346,7 +365,7 @@ void MainWindow::on_BackButton_clicked()
     ScrubTick();
 }
 
-void MainWindow::on_ShuffleButton_clicked()
+void MainWindow::on_ShuffleButton_released()
 {
     shuffle = true;
 
@@ -425,20 +444,26 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     ScrubTick();
 }
 
-void MainWindow::on_actionReverb_triggered()
-{
-    reverbDialog->show();
-}
-
 void MainWindow::handleSongFinished(QMediaPlayer::MediaStatus status) {
     if (status == QMediaPlayer::EndOfMedia) {
         callSkip();
     }
 }
 
+// Window Openers
+void MainWindow::on_actionReverb_triggered()
+{
+    reverbDialog->show();
+}
+
 void MainWindow::on_actionEqualizer_triggered()
 {
     eqDialog->show();
+}
+
+void MainWindow::on_actionAdd_From_YouTube_URL_triggered()
+{
+    ytdlDialog->show();
 }
 
 // UNUSED SLOTS
@@ -460,3 +485,14 @@ void MainWindow::on_volumeSlider_sliderMoved(int position)
 {
 
 }
+
+void MainWindow::on_ShuffleButton_clicked()
+{
+
+}
+
+
+
+
+
+

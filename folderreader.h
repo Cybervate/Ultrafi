@@ -1,6 +1,8 @@
 #ifndef FOLDERREADER_H
 #define FOLDERREADER_H
 
-void readFolder();
+#include <iostream>
+
+void readFolder(std::string path);
 
 #endif // FOLDERREADER_H

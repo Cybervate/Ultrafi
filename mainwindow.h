@@ -13,6 +13,7 @@
 
 #include "reverbdialog.h"
 #include "equalizer.h"
+#include "downloadyt.h"
 
 #include "metastructures.h"
 
@@ -26,7 +27,10 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+
     void callSkip();
+    std::string path = "/home/mmb/Desktop/UltrafiLibrary";
+
     ~MainWindow();
 
 private slots:
@@ -68,17 +72,31 @@ private slots:
 
     void on_actionEqualizer_triggered();
 
+    void on_ShuffleButton_released();
+
+    void on_actionAdd_From_YouTube_URL_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     ReverbDialog * reverbDialog = new ReverbDialog(this);
     equalizer * eqDialog = new equalizer(this);
+    DownloadYt * ytdlDialog = new DownloadYt(this);
 
     QListWidgetItem * curItemRef = NULL;
 
     QListWidget * curList = NULL;
 
     std::string curTabName = "";
+
+    QIcon playIcon = QIcon(QPixmap(":/Icons/Icons/play.png"));
+    QIcon pauseIcon = QIcon(QPixmap(":/Icons/Icons/pause.png"));
+    QIcon forwardIcon = QIcon(QPixmap(":/Icons/Icons/forward.png"));
+    QIcon backIcon = QIcon(QPixmap(":/Icons/Icons/forward.png").transformed(QTransform().scale(-1, 1)));
+    QIcon shuffleIcon = QIcon(QPixmap(":/Icons/Icons/shuffle.png"));
+    QPixmap volumePixmap = QPixmap(":/Icons/Icons/volume.png");
+    QPixmap mutePixmap = QPixmap(":/Icons/Icons/mute.png");
+
 
 //    std::string curSongPath = "/home/mmb/Desktop/UltrafiLibrary/Earl Sweatshirt/voir dire/01 - 100 High Street.mp3";
 

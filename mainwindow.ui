@@ -373,7 +373,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="documentMode">
         <bool>false</bool>
@@ -462,15 +462,21 @@
      <rect>
       <x>210</x>
       <y>40</y>
-      <width>82</width>
-      <height>51</height>
+      <width>71</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QPushButton" name="playButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>Play</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -479,13 +485,35 @@
    <widget class="QWidget" name="horizontalLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>1030</x>
+      <x>1000</x>
       <y>0</y>
-      <width>261</width>
+      <width>291</width>
       <height>121</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="volumeLogo">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="Icons.qrc">:/Icons/Icons/volume.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QSlider" name="volumeSlider">
        <property name="value">
@@ -575,15 +603,21 @@
      <rect>
       <x>300</x>
       <y>40</y>
-      <width>82</width>
-      <height>51</height>
+      <width>71</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
       <widget class="QPushButton" name="SkipButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>SkipButton</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -594,15 +628,21 @@
      <rect>
       <x>120</x>
       <y>40</y>
-      <width>82</width>
-      <height>51</height>
+      <width>71</width>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <widget class="QPushButton" name="BackButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>BackButton</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -661,6 +701,9 @@
        <property name="text">
         <string>Shuffle Songs</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -700,13 +743,6 @@
      <height>28</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen_Library_Folder"/>
-    <addaction name="actionAdd_From_YouTube_URL"/>
-   </widget>
    <widget class="QMenu" name="menuEffects">
     <property name="title">
      <string>Effects</string>
@@ -717,6 +753,13 @@
     <addaction name="actionEcho"/>
     <addaction name="actionDistortion"/>
     <addaction name="actionPan"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Library_Folder"/>
+    <addaction name="actionAdd_From_YouTube_URL"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEffects"/>
@@ -763,6 +806,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="Icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

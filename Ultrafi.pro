@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     audioengine.cpp \
+    downloadyt.cpp \
     equalizer.cpp \
     folderreader.cpp \
     main.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     audioengine.h \
+    downloadyt.h \
     equalizer.h \
     folderreader.h \
     mainwindow.h \
@@ -26,6 +28,7 @@ HEADERS += \
     reverbdialog.h
 
 FORMS += \
+    downloadyt.ui \
     equalizer.ui \
     mainwindow.ui \
     reverbdialog.ui
@@ -44,3 +47,10 @@ INCLUDEPATH += $$PWD/../../../Desktop/irrKlang-64bit-1.6.0/include
 DEPENDPATH += $$PWD/../../../Desktop/irrKlang-64bit-1.6.0/include
 INCLUDEPATH += ./
 DEPENDPATH += ./
+
+RESOURCES += \
+    Icons.qrc
+
+DISTFILES += \
+    README.md \
+    mdimages/home.png

@@ -185,8 +185,8 @@ void sortAlbums() {
     }
 }
 
-void readFolder() {
-    std::string path = "/home/mmb/Desktop/UltrafiLibrary";
+void readFolder(std::string path) {
+//    std::string path = "/home/mmb/Desktop/UltrafiLibrary";
 
     folderLoop(path);
     sortAlbums();
